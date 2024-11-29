@@ -1,103 +1,95 @@
-from telethon import TelegramClient, events, Button
-import asyncio
 import random
 import datetime
-import pytz  # Adicionada a importação para lidar com fuso horário
-import os
+import pytz
+import asyncio
+from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
 
-# Credenciais do Telegram (carregadas de variáveis de ambiente para maior segurança)
-api_id = '23741041'
-api_hash = '30000ace726d11d9bbcdb6415f340709'
-bot_token = '7279073071:AAFQ4Gl03XZkOXWhjUcw7Hat-6R4lqWyKjc'
+# Configurações do bot
+api_token = '7279073071:AAFQ4Gl03XZkOXWhjUcw7Hat-6R4lqWyKjc'  # Substitua pelo seu token
+chat_id = '-1002179015837'  # Substitua pelo ID do grupo ou canal
 
-client = TelegramClient('bot', api_id, api_hash).start(bot_token=bot_token)
+# Inicializando o bot
+bot = Bot(token=api_token)
 
-# ID do chat (substitua pelo seu chat ID real)
-chat_id = -1002179015837  # Certifique-se de que está correto
+# Fuso horário de Brasília
+brasilia_tz = pytz.timezone('America/Sao_Paulo')
 
-# Função para enviar a pré-mensagem
-async def send_pre_message():
-    try:
-        await client.send_file(
-            chat_id,
-            'botpy.img1.jpg',  # Certifique-se de que a imagem está no mesmo diretório que o script
-            caption="**🚨 HACKEANDO O ALGORITMO COM ROBOTOPS! 🤖🚨**\n🔍Buscando oportunidades...\n\nQuer Saber mais sobre Hack de Entradas?\nAperte aqui (https://t.me/HackEntradas) ↩️\n\n**🤚 AGUARDE A CONFIRMAÇÃO!👇**"
-        )
-    except Exception as e:
-        print(f"Erro ao enviar pré-mensagem: {e}")
+# Função para gerar horários com intervalo de 10 a 15 minutos
+def gerar_horarios():
+    now = datetime.datetime.now(brasilia_tz)
+    base_time = (now + datetime.timedelta(minutes=(5 - now.minute % 5))).replace(second=0, microsecond=0)
+    horarios = [base_time]
+    for i in range(5):
+        intervalo = 10 if i % 2 == 0 else 15
+        next_time = horarios[-1] + datetime.timedelta(minutes=intervalo)
+        horarios.append(next_time)
+    return horarios
 
-# Função para gerar horários dinâmicos com timezone
-def generate_times(base_time):
-    times = [(base_time + datetime.timedelta(minutes=12 + i * 14)).strftime("%H:%M") for i in range(6)]
-    line1 = ' | '.join([f"⏰ {times[i]}" for i in range(3)])  # Primeira linha de horários
-    line2 = ' | '.join([f"⏰ {times[i]}" for i in range(3, 6)])  # Segunda linha de horários
-    return f"{line1}\n{line2}"
+# Função para formatar horários
+def formatar_horarios(horarios):
+    linha1 = ' | '.join([h.strftime('%H:%M') for h in horarios[:3]])
+    linha2 = ' | '.join([h.strftime('%H:%M') for h in horarios[3:]])
+    return f"⏰  {linha1}\n⏰  {linha2}"
 
-# Função para gerar a mensagem principal
-async def send_main_message(base_time):
-    try:
-        versions = [
-            ("**🐂 Fortune Ox 🐂**", 9, 7),
-            ("**🐯 Fortune Tiger 🐯**", 12, 4),
-            ("**🐰 Fortune Rabbit 🐰**", 6, 11),
-            ("**🐭 Fortune Mouse 🐭**", 15, 3),
-            ("**🐲 Fortune Dragon 🐲**", 8, 9)
-        ]
+# Função para enviar sinais
+async def enviar_sinais(jogo, data_valida):
+    horarios = gerar_horarios()
+    msg_sinais = f"""
+🤑 NOVA OPORTUNIDADE!
 
-        random.shuffle(versions)
-        game, normal, turbo = random.choice(versions)
+🎮 JOGO: {jogo}
+{formatar_horarios(horarios)}
+📅 VÁLIDO ATÉ: {data_valida}
 
-        message = f"""
-**🎮JOGO:** {game}
-{generate_times(base_time)} 
-**📅 VÁLIDO ATÉ:** {datetime.datetime.now().strftime('%d/%m/%Y')}
+🚨 PLATAFORMA REGULARIZADA ⬇️
+🎰 Plataforma: https://abrir.ai/SlotsOfc
+⚠️ NÃO TENTE EM OUTRO SITE ⬆️
 
-{game}
-✅ {normal}**X Normal**
-🔄 **Alternando** 
-⚡️ {turbo}**X Turbo**
-
-**🚨 FUNCIONA APENAS NESTA PLATAFORMA ⬇️**
-🎰 𝗣𝗹𝗮𝘁𝗮𝗳𝗼𝗿𝗺𝗮: https://abrir.ai/PlataformaOfc
-**⚠️ NÃO TENTE EM OUTRO SITE! ⬆️**
-
-**👇 HACK DE ENTRADAS 👇**
-📲 https://abrir.ai/RobosTOP 📲
+👇 APLICATIVO DOS SLOTS 👇
+📲 https://robos.top/Ofc 📲
+🔞 Jogue com responsabilidade!
 """
-        buttons = [
-            [Button.url("🚨 JOGUE AQUI 🚨", "https://abrir.ai/PlataformaOfc")],
-            [Button.url("👩‍💻 HACK DE ENTRADAS 👩‍💻", "https://t.me/HackEntradas")]
-        ]
-
-        await client.send_message(chat_id, message, buttons=buttons, file='botpy.img2.jpg')
-    except Exception as e:
-        print(f"Erro ao enviar mensagem principal: {e}")
-
-# Função para gerar nomes e valores de vencedores
-def generate_winners():
-    names = ["Michele", "Gisele", "Natalia", "Anderson", "Graça", "Evelyn", "Cynthia", "Carlos", "Lara", "Larissa", "Marina", "Eugênio", "Luana", "Renan", "Mariana", "Tiago", "Raquel", "Claudio", "Zélia", "Wagner", "Juliana", "Noemi", "Rosângela", "Cecília", "Laís", "Marjorie", "Bianca", "Aline", "Cíntia", "André", "Vanessa", "Thiago", "Nathália", "Juliano", "Glauco", "Ellen", "Renato", "Gustavo", "Tatiane", "Hugo", "Milena", "Joaquim", "Soraya", "Clara", "Ariana", "Kelly", "Viviane", "Natália", "Lucas", "Karina", "Roger", "Letícia", "Juliana", "Lívia", "Elaine", "Tânia", "Rodrigo", "César", "Paulo", "Ricardo", "Lorenzo", "Julio", "Luiz", "Neiva", "Gilberto", "Luiza", "Gabriel", "Otávio", "Cristina", "Marcel", "Vinícius", "Evelyn", "Fernanda", "Marcelo", "Alice", "Sérgio", "Fernando", "Iago", "Fátima", "Sérgio", "Viviane", "Hélio", "Maria", "Eduardo", "Josiane", "Nina", "Priscila", "Cássia", "Ney", "Mariana", "Carlos", "João", "Alberto", "Daniel", "Jaime", "Fernando", "Fábia", "Diego", "Elaine", "Lucas", "Sérgio", "Patrícia", "Tiago", "Léo", "Jéssica", "Sabrina", "Patrícia", "Thiago", "Roberto", "Renato", "Joaquim", "Manuela", "Breno", "Rosa", "Roberta", "Giovana", "Fernando", "Denise", "Paula", "Alan", "Nivaldo", "Fábio", "Roberto", "Giovanna", "Cristina", "João Paulo", "Karla", "Vinícius", "Paulo", "Mariana", "Simone", "Félix", "Thiago", "Douglas", "Marcio", "Elaine", "Márcia", "Rafael", "Eliane", "Rogério", "Rosana", "Geraldo", "Karin", "Rafael", "Patrícia", "Paulo", "Viviane", "Bruno", "Tatiane", "Erick", "Jéssica", "Alice", "Gustavo", "Marina", "Fernanda", "Alessandra", "Felipe", "Thiago", "Zita", "Rafaela", "Nélio", "Roberto", "Adriana", "Fernando", "Eduarda", "Elias", "Rafaela", "Marcio", "Isabela", "Diana", "Pedro", "Edna", "Alana", "Rui", "Alice", "Ana Carolina", "Luiz", "Carmen", "Bruna", "Lucia", "Natália", "Matheus", "Bruno", "Ricardo", "Samuel", "Mônica", "Guilherme", "Miriam", "Rogério", "Leandro", "Eliane", "Kelly", "Larissa", "Soraya", "Edson", "Hugo"]
-    random.shuffle(names)
-    values = sorted(random.sample(range(200, 1201), len(names)), reverse=True)
-    winners = [f"{i+1}º: {names[i]} R$ {values[i]:,.2f}".replace(",", ".") for i in range(8)]
-    return f"**🏆VITÓRIA PARA {random.randint(70, 98)}% DOS APOSTADORES🏆**\n\n" + "\n".join(winners) + "\n\n**🎰🔎 BUSCANDO NOVAS BRECHAS**"
-
-# Função para enviar a mensagem de vencedores
-async def send_winners_message():
+    # Criar botões
+    keyboard = [[InlineKeyboardButton("🚨JOGUE AQUI🚨", url="https://abrir.ai/SlotsOfc")]]
+    reply_markup = InlineKeyboardMarkup(keyboard)
     try:
-        await client.send_message(chat_id, generate_winners())
+        with open('botpy.img2.jpg', 'rb') as image:
+            await bot.send_photo(chat_id=chat_id, photo=image, caption=msg_sinais, reply_markup=reply_markup)
+        print(f"Mensagem de sinais enviada para {jogo}.")
     except Exception as e:
-        print(f"Erro ao enviar mensagem de vencedores: {e}")
+        print(f"Erro ao enviar mensagem de sinais: {e}")
 
-# Função principal que controla o envio das mensagens
-async def main():
-    while True:  # Loop infinito
-        await send_pre_message()
-        await asyncio.sleep(120)  # Aguarda 2 minutos antes de enviar a mensagem principal
-        base_time = datetime.datetime.now(pytz.timezone('America/Sao_Paulo'))
-        await send_main_message(base_time)
-        await asyncio.sleep(3300)  # Aguarda 55 minutos antes de enviar a mensagem dos vencedores
-        await send_winners_message()
-        await asyncio.sleep(180)  # Aguarda 3 minutos antes de reiniciar o ciclo
+# Função para enviar mensagem de finalização
+async def enviar_finalizacao():
+    msg_finalizacao = """
+⌛️ MINUTOS FINALIZADOS ⌛️
+✅✅✅ VITÓRIA ✅✅✅
+"""
+    keyboard = [[InlineKeyboardButton("🎁CADASTRE-SE🎁", url="https://abrir.ai/SlotsOfc")]]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    try:
+        await bot.send_message(chat_id=chat_id, text=msg_finalizacao, reply_markup=reply_markup)
+        print("Mensagem de finalização enviada.")
+    except Exception as e:
+        print(f"Erro ao enviar mensagem de finalização: {e}")
 
-with client:
-    client.loop.run_until_complete(main())
+# Função principal
+async def main_loop():
+    jogos = [
+        "🐯 Fortune Tiger 🐯",
+        "🐭 Fortune Mouse 🐭",
+        "🐂 Fortune OX 🐂",
+        "🐲 Fortune Dragon 🐲",
+        "🐰 Fortune Rabbit 🐰"
+    ]
+    while True:
+        data_valida = (datetime.datetime.now(brasilia_tz) + datetime.timedelta(days=1)).strftime('%d/%m/%Y')
+        for jogo in jogos:
+            await enviar_sinais(jogo, data_valida)
+            await asyncio.sleep(55 * 60)  # Espera 55 minutos
+            await enviar_finalizacao()
+            await asyncio.sleep(5 * 60)  # Espera 5 minutos
+
+# Iniciar o script
+if __name__ == "__main__":
+    asyncio.run(main_loop())

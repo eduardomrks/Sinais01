@@ -42,7 +42,7 @@ async def enviar_sinais(jogo, data_valida):
 📅 VÁLIDO ATÉ: {data_valida}
 
 🚨 PLATAFORMA REGULARIZADA ⬇️
-🎰 Plataforma: https://abre.news/MinutosPagantes
+🎰 Plataforma: https://abrir.ai/News
 ⚠️ NÃO TENTE EM OUTRO SITE ⬆️
 
 👇 APLICATIVO DOS SLOTS 👇
@@ -50,7 +50,7 @@ async def enviar_sinais(jogo, data_valida):
 🔞 Jogue com responsabilidade!
 """
     # Criar botões
-    keyboard = [[InlineKeyboardButton("🚨JOGUE AQUI🚨", url="https://abre.news/MinutosPagantes")]]
+    keyboard = [[InlineKeyboardButton("🚨JOGUE AQUI🚨", url="https://abrir.ai/News")]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     try:
         with open('botpy.img2.jpg', 'rb') as image:
@@ -65,7 +65,7 @@ async def enviar_finalizacao():
 ⌛️ MINUTOS FINALIZADOS ⌛️
 ✅✅✅ VITÓRIA ✅✅✅
 """
-    keyboard = [[InlineKeyboardButton("🎁CADASTRE-SE🎁", url="https://abre.news/MinutosPagantes")]]
+    keyboard = [[InlineKeyboardButton("🎁CADASTRE-SE🎁", url="https://abrir.ai/News")]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     try:
         await bot.send_message(chat_id=chat_id, text=msg_finalizacao, reply_markup=reply_markup)

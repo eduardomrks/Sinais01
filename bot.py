@@ -42,15 +42,15 @@ async def enviar_sinais(jogo, data_valida):
 📅 VÁLIDO ATÉ: {data_valida}
 
 🚨 PLATAFORMA REGULARIZADA ⬇️
-🎰 Plataforma: https://abrir.ai/News
+🎰 Plataforma: https://abrir.ai/SlotNews
 ⚠️ NÃO TENTE EM OUTRO SITE ⬆️
 
 👇 APLICATIVO DOS SLOTS 👇
-📲 https://robos.top/Ofc 📲
+📲https://t.me/HackEntradas 📲
 🔞 Jogue com responsabilidade!
 """
     # Criar botões
-    keyboard = [[InlineKeyboardButton("🚨JOGUE AQUI🚨", url="https://abrir.ai/News")]]
+    keyboard = [[InlineKeyboardButton("🚨JOGUE AQUI🚨", url="https://abrir.ai/SlotNews")]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     try:
         with open('botpy.img2.jpg', 'rb') as image:

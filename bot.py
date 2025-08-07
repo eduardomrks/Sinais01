@@ -5,7 +5,7 @@ import asyncio
 from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
 
 # Configurações do bot
-api_token = '7279073071:AAFQ4Gl03XZkOXWhjUcw7Hat-6R4lqWyKjc'  # Substitua pelo seu token
+api_token = '8280555598:AAFhLXQ_JMsPH3oEOLSv9o_3TZDd38wxHzQ'  # Substitua pelo seu token
 chat_id = '-1002179015837'  # Substitua pelo ID do grupo ou canal
 
 # Inicializando o bot
@@ -93,3 +93,4 @@ async def main_loop():
 # Iniciar o script
 if __name__ == "__main__":
     asyncio.run(main_loop())
+
